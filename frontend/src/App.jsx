@@ -37,7 +37,6 @@ function App() {
         fetchAllDatabases();
     }, []);
 
-    // Función para abrir el modal y consultar las métricas específicas del escenario
     const abrirDetalle = async (db) => {
         setSelectedDb(db);
         setLoadingDetails(true);
@@ -68,7 +67,7 @@ function App() {
         <div className="min-h-screen bg-slate-100 p-8 font-sans">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-3xl font-bold text-slate-800 mb-2">Centro de Monitoreo Multi-Instancia</h1>
-                <p className="text-slate-500 mb-8">Haz clic en cualquier tarjeta para ver el desglose técnico y la causa raíz del rendimiento.</p>
+                <p className="text-slate-500 mb-8">Haz clic en cualquier tarjeta para ver el desglose técnico de las 24 variables del documento oficial.</p>
 
                 {loading ? (
                     <p className="text-slate-500 animate-pulse">Analizando instancias...</p>
@@ -99,10 +98,10 @@ function App() {
             {/* VENTANA MODAL / DRILL-DOWN */}
             {selectedDb && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-2xl max-w-3xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+                    <div className="bg-white rounded-2xl max-w-4xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
                         <div className="flex justify-between items-center mb-6 border-b pb-4">
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-800">Diagnóstico Detallado</h2>
+                                <h2 className="text-2xl font-bold text-slate-800">Diagnóstico Técnico Detallado</h2>
                                 <p className="text-slate-500 text-sm">{selectedDb.nombre}</p>
                             </div>
                             <button
@@ -114,71 +113,70 @@ function App() {
                         </div>
 
                         {loadingDetails ? (
-                            <p className="text-center py-12 text-slate-500 animate-pulse">Cargando desglose de variables técnicas...</p>
+                            <p className="text-center py-12 text-slate-500 animate-pulse">Cargando desglose de variables oficiales...</p>
                         ) : (
                             <div className="space-y-6">
 
-                                {/* 1. SECCIÓN PROCESOS ($p_n$) */}
+                                {/* PROCESOS ($p_1$ - $p_8$) */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <h3 className="font-bold text-indigo-700 mb-3 flex items-center justify-between">
-                                        <span>Métricas de Procesos ($p_n$)</span>
-                                    </h3>
+                                    <h3 className="font-bold text-indigo-700 mb-3">Monitor de Procesos ($p_1$ a $p_8$)</h3>
                                     {detalles.procesos && (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                                            <div className="bg-white p-3 rounded shadow-sm">
-                                                <span className="text-slate-400 block text-xs">Procesos Actuales ($p_1$)</span>
-                                                <span className="font-bold text-slate-700 text-lg">{detalles.procesos.procesosActuales}</span>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Actuales ($p_1$)</span><span className="font-bold">{detalles.procesos.procesosActuales}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Máximos ($p_2$)</span><span className="font-bold">{detalles.procesos.procesosMaximos}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Ses. Actuales ($p_3$)</span><span className="font-bold">{detalles.procesos.sesionesActuales}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Ses. Activas ($p_4$)</span><span className="font-bold">{detalles.procesos.sesionesActivas}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Ses. Inactivas ($p_5$)</span><span className="font-bold">{detalles.procesos.sesionesInactivas}</span></div>
+                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.procesos.sesionesBloqueadas > 0 ? 'bg-red-50 border border-red-300' : ''}`}>
+                                                <span className="text-slate-400 block text-xs">Bloqueadas ($p_6$)</span>
+                                                <span className={`font-bold ${detalles.procesos.sesionesBloqueadas > 0 ? 'text-red-600' : ''}`}>{detalles.procesos.sesionesBloqueadas} {detalles.procesos.sesionesBloqueadas > 0 ? '🔴' : '✅'}</span>
                                             </div>
-                                            <div className="bg-white p-3 rounded shadow-sm">
-                                                <span className="text-slate-400 block text-xs">Límite de Procesos ($p_2$)</span>
-                                                <span className="font-bold text-slate-700 text-lg">{detalles.procesos.limiteProcesos}</span>
-                                            </div>
-                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.procesos.sesionesBloqueadas > 0 ? 'border-2 border-red-400 bg-red-50' : ''}`}>
-                                                <span className="text-slate-400 block text-xs">Sesiones Bloqueadas ($p_4$)</span>
-                                                <span className={`font-bold text-lg ${detalles.procesos.sesionesBloqueadas > 0 ? 'text-red-600' : 'text-slate-700'}`}>
-                          {detalles.procesos.sesionesBloqueadas} {detalles.procesos.sesionesBloqueadas > 0 ? '🔴' : '✅'}
-                        </span>
-                                            </div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Op. Prolongadas ($p_7$)</span><span className="font-bold">{detalles.procesos.operacionesProlongadas}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Uso Recursos ($p_8$)</span><span className="font-bold">{detalles.procesos.usoRecursos}%</span></div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* 2. SECCIÓN MEMORIA ($m_n$) */}
+                                {/* MEMORIA ($m_1$ - $m_9$) */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <h3 className="font-bold text-indigo-700 mb-3">Métricas de Memoria ($m_n$)</h3>
+                                    <h3 className="font-bold text-indigo-700 mb-3">Monitor de Memoria ($m_1$ a $m_9$)</h3>
                                     {detalles.memoria && (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                                            <div className="bg-white p-3 rounded shadow-sm">
-                                                <span className="text-slate-400 block text-xs">PGA Cache Hit Ratio ($m_1$)</span>
-                                                <span className="font-bold text-slate-700 text-lg">{detalles.memoria.pgaCacheHit}%</span>
+                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Tam. SGA ($m_1$)</span><span className="font-bold">{detalles.memoria.tamanoSga}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Libre SGA ($m_2$)</span><span className="font-bold">{detalles.memoria.memoriaLibreSga}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Shared Pool ($m_3$)</span><span className="font-bold">{detalles.memoria.usoSharedPool}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Buffer Cache ($m_4$)</span><span className="font-bold">{detalles.memoria.usoBufferCache}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">PGA Asignada ($m_5$)</span><span className="font-bold">{detalles.memoria.pgaAsignada}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">PGA Utilizada ($m_6$)</span><span className="font-bold">{detalles.memoria.pgaUtilizada}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">PGA Máxima ($m_7$)</span><span className="font-bold">{detalles.memoria.pgaMaxima}</span></div>
+                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.memoria.overAllocation > 0 ? 'bg-red-50 border border-red-300' : ''}`}>
+                                                <span className="text-slate-400 block text-xs">Over-Allocation ($m_8$)</span>
+                                                <span className={`font-bold ${detalles.memoria.overAllocation > 0 ? 'text-red-600' : ''}`}>{detalles.memoria.overAllocation} {detalles.memoria.overAllocation > 0 ? '⚠️' : '✅'}</span>
                                             </div>
-                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.memoria.pgaOverAllocation > 0 ? 'border-2 border-red-400 bg-red-50' : ''}`}>
-                                                <span className="text-slate-400 block text-xs">PGA Over Allocation ($m_2$)</span>
-                                                <span className={`font-bold text-lg ${detalles.memoria.pgaOverAllocation > 0 ? 'text-red-600' : 'text-slate-700'}`}>
-                          {detalles.memoria.pgaOverAllocation} {detalles.memoria.pgaOverAllocation > 0 ? '⚠️' : '✅'}
-                        </span>
-                                            </div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Cache Hit PGA ($m_9$)</span><span className="font-bold">{detalles.memoria.cacheHitPga}%</span></div>
                                         </div>
                                     )}
                                 </div>
 
-                                {/* 3. SECCIÓN ARCHIVOS ($a_n$) */}
+                                {/* ARCHIVOS ($a_1$ - $a_8$) */}
                                 <div className="bg-slate-50 p-4 rounded-xl border border-slate-200">
-                                    <h3 className="font-bold text-indigo-700 mb-3">Métricas de Archivos ($a_n$)</h3>
+                                    <h3 className="font-bold text-indigo-700 mb-3">Monitor de Archivos ($a_1$ a $a_8$)</h3>
                                     {detalles.archivos && (
-                                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
-                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.archivos.datafilesOffline > 0 ? 'border-2 border-red-400 bg-red-50' : ''}`}>
-                                                <span className="text-slate-400 block text-xs">Datafiles Offline ($a_1$)</span>
-                                                <span className={`font-bold text-lg ${detalles.archivos.datafilesOffline > 0 ? 'text-red-600' : 'text-slate-700'}`}>
-                          {detalles.archivos.datafilesOffline} {detalles.archivos.datafilesOffline > 0 ? '❌' : '✅'}
-                        </span>
+                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Datafiles Online ($a_1$)</span><span className="font-bold">{detalles.archivos.datafilesOnline}</span></div>
+                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.archivos.datafilesOffline > 0 ? 'bg-red-50 border border-red-300' : ''}`}>
+                                                <span className="text-slate-400 block text-xs">Datafiles Offline ($a_2$)</span>
+                                                <span className={`font-bold ${detalles.archivos.datafilesOffline > 0 ? 'text-red-600' : ''}`}>{detalles.archivos.datafilesOffline} {detalles.archivos.datafilesOffline > 0 ? '❌' : '✅'}</span>
                                             </div>
-                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.archivos.redoLogsProblemas > 0 ? 'border-2 border-red-400 bg-red-50' : ''}`}>
-                                                <span className="text-slate-400 block text-xs">Redo Logs con Problemas ($a_2$)</span>
-                                                <span className={`font-bold text-lg ${detalles.archivos.redoLogsProblemas > 0 ? 'text-red-600' : 'text-slate-700'}`}>
-                          {detalles.archivos.redoLogsProblemas} {detalles.archivos.redoLogsProblemas > 0 ? '❌' : '✅'}
-                        </span>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Tam. Datafiles ($a_3$)</span><span className="font-bold">{detalles.archivos.tamanoDatafiles}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Espacio Tablespaces ($a_4$)</span><span className="font-bold">{detalles.archivos.espacioTablespaces}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Tempfiles ($a_5$)</span><span className="font-bold">{detalles.archivos.tempfiles}</span></div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Redo Logs ($a_6$)</span><span className="font-bold">{detalles.archivos.redoLogs}</span></div>
+                                            <div className={`bg-white p-3 rounded shadow-sm ${detalles.archivos.archivosInvalidos > 0 ? 'bg-red-50 border border-red-300' : ''}`}>
+                                                <span className="text-slate-400 block text-xs">Inválidos ($a_7$)</span>
+                                                <span className={`font-bold ${detalles.archivos.archivosInvalidos > 0 ? 'text-red-600' : ''}`}>{detalles.archivos.archivosInvalidos}</span>
                                             </div>
+                                            <div className="bg-white p-3 rounded shadow-sm"><span className="text-slate-400 block text-xs">Inaccesibles ($a_8$)</span><span className="font-bold">{detalles.archivos.archivosInaccesibles}</span></div>
                                         </div>
                                     )}
                                 </div>
