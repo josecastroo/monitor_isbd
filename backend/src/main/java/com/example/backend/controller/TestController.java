@@ -4,7 +4,10 @@ import com.example.backend.dto.FileMetrics;
 import com.example.backend.dto.HealthResult;
 import com.example.backend.dto.MemoryMetrics;
 import com.example.backend.dto.ProcessMetrics;
+import com.example.backend.model.MonitorAlertas;
 import com.example.backend.model.MonitorIndices;
+import com.example.backend.repository.AlertasRepository;
+import com.example.backend.repository.IndicesRepository;
 import com.example.backend.repository.OracleExtractionRepository;
 import com.example.backend.service.CalculationService;
 import com.example.backend.service.HistoryService;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
@@ -20,15 +25,21 @@ public class TestController {
     private final CalculationService calculationService;
     private final HistoryService historyService;
     private final AlertService alertService;
+    private final IndicesRepository indicesRepository;
+    private final AlertasRepository alertasRepository;
 
     public TestController(OracleExtractionRepository oracleExtractionRepository,
                           CalculationService calculationService,
                           HistoryService historyService,
-                          AlertService alertService) {
+                          AlertService alertService,
+                          IndicesRepository indicesRepository,
+                          AlertasRepository alertasRepository) {
         this.oracleExtractionRepository = oracleExtractionRepository;
         this.calculationService = calculationService;
         this.historyService = historyService;
         this.alertService = alertService;
+        this.indicesRepository = indicesRepository;
+        this.alertasRepository = alertasRepository;
     }
 
     @GetMapping("/procesos")
@@ -61,5 +72,16 @@ public class TestController {
 
         // Guardar en historial y retornar
         return historyService.guardarHistorial(resultado);
+    }
+
+    @GetMapping("/historial")
+    public List<MonitorIndices> getHistorial() {
+        return indicesRepository.findTop20ByOrderByFechaHoraDesc();
+    }
+
+    // NUEVO: Endpoint para obtener las alertas
+    @GetMapping("/alertas")
+    public List<MonitorAlertas> getAlertas() {
+        return alertasRepository.findTop20ByOrderByFechaHoraDesc();
     }
 }
