@@ -4,6 +4,7 @@ import com.example.backend.dto.ProcessMetrics;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+@Repository
 public class OracleExtractionRepository {
     private final JdbcTemplate jdbcTemplate;
 
