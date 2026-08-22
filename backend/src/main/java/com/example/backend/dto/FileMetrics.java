@@ -3,40 +3,76 @@ package com.example.backend.dto;
 import lombok.Data;
 
 public class FileMetrics {
-    private Integer datafilesOnline;
-    private Integer datafilesOffline;
-    private Integer redoLogsNormales;
-    private Integer redoLogsProblemas;
+    private int datafilesOnline;     // a1
+    private int datafilesOffline;    // a2
+    private long tamanoDatafiles;    // a3
+    private long espacioTablespaces; // a4
+    private int tempfiles;           // a5
+    private int redoLogs;            // a6
+    private int archivosInvalidos;   // a7
+    private int archivosInaccesibles;
 
-    public Integer getDatafilesOnline() {
+    public int getDatafilesOnline() {
         return datafilesOnline;
     }
 
-    public void setDatafilesOnline(Integer datafilesOnline) {
+    public void setDatafilesOnline(int datafilesOnline) {
         this.datafilesOnline = datafilesOnline;
     }
 
-    public Integer getDatafilesOffline() {
+    public int getDatafilesOffline() {
         return datafilesOffline;
     }
 
-    public void setDatafilesOffline(Integer datafilesOffline) {
+    public void setDatafilesOffline(int datafilesOffline) {
         this.datafilesOffline = datafilesOffline;
     }
 
-    public Integer getRedoLogsNormales() {
-        return redoLogsNormales;
+    public long getTamanoDatafiles() {
+        return tamanoDatafiles;
     }
 
-    public void setRedoLogsNormales(Integer redoLogsNormales) {
-        this.redoLogsNormales = redoLogsNormales;
+    public void setTamanoDatafiles(long tamanoDatafiles) {
+        this.tamanoDatafiles = tamanoDatafiles;
     }
 
-    public Integer getRedoLogsProblemas() {
-        return redoLogsProblemas;
+    public long getEspacioTablespaces() {
+        return espacioTablespaces;
     }
 
-    public void setRedoLogsProblemas(Integer redoLogsProblemas) {
-        this.redoLogsProblemas = redoLogsProblemas;
+    public void setEspacioTablespaces(long espacioTablespaces) {
+        this.espacioTablespaces = espacioTablespaces;
+    }
+
+    public int getTempfiles() {
+        return tempfiles;
+    }
+
+    public void setTempfiles(int tempfiles) {
+        this.tempfiles = tempfiles;
+    }
+
+    public int getRedoLogs() {
+        return redoLogs;
+    }
+
+    public void setRedoLogs(int redoLogs) {
+        this.redoLogs = redoLogs;
+    }
+
+    public int getArchivosInvalidos() {
+        return archivosInvalidos;
+    }
+
+    public void setArchivosInvalidos(int archivosInvalidos) {
+        this.archivosInvalidos = archivosInvalidos;
+    }
+
+    public int getArchivosInaccesibles() {
+        return archivosInaccesibles;
+    }
+
+    public void setArchivosInaccesibles(int archivosInaccesibles) {
+        this.archivosInaccesibles = archivosInaccesibles;
     }
 }

@@ -12,6 +12,8 @@ import com.example.backend.repository.OracleExtractionRepository;
 import com.example.backend.service.CalculationService;
 import com.example.backend.service.HistoryService;
 import com.example.backend.service.AlertService;
+import com.example.backend.service.SimulationService;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,50 +29,71 @@ public class TestController {
     private final AlertService alertService;
     private final IndicesRepository indicesRepository;
     private final AlertasRepository alertasRepository;
+    private final SimulationService simulationService;
 
     public TestController(OracleExtractionRepository oracleExtractionRepository,
                           CalculationService calculationService,
                           HistoryService historyService,
                           AlertService alertService,
                           IndicesRepository indicesRepository,
-                          AlertasRepository alertasRepository) {
+                          AlertasRepository alertasRepository,
+                          SimulationService simulationService) {
         this.oracleExtractionRepository = oracleExtractionRepository;
         this.calculationService = calculationService;
         this.historyService = historyService;
         this.alertService = alertService;
         this.indicesRepository = indicesRepository;
         this.alertasRepository = alertasRepository;
+        this.simulationService = simulationService;
     }
 
     @GetMapping("/procesos")
-    public ProcessMetrics getProcesos() {
-        // Llamamos al repositorio que ejecuta los SELECT a las vistas de Oracle
-        return oracleExtractionRepository.getProcessMetrics();
+    public ProcessMetrics getProcesos(@RequestParam(required = false, defaultValue = "real") String escenario) {
+        if ("real".equalsIgnoreCase(escenario)) {
+            return oracleExtractionRepository.getProcessMetrics();
+        }
+        return simulationService.getSimulatedProcesses(escenario);
     }
 
     @GetMapping("/memoria")
-    public MemoryMetrics getMemoria() {
-        return oracleExtractionRepository.getMemoryMetrics();
+    public MemoryMetrics getMemoria(@RequestParam(required = false, defaultValue = "real") String escenario) {
+        if ("real".equalsIgnoreCase(escenario)) {
+            return oracleExtractionRepository.getMemoryMetrics();
+        }
+        return simulationService.getSimulatedMemory(escenario);
     }
 
     @GetMapping("/archivos")
-    public FileMetrics getArchivos() {
-        return oracleExtractionRepository.getFileMetrics();
+    public FileMetrics getArchivos(@RequestParam(required = false, defaultValue = "real") String escenario) {
+        if ("real".equalsIgnoreCase(escenario)) {
+            return oracleExtractionRepository.getFileMetrics();
+        }
+        return simulationService.getSimulatedFiles(escenario);
     }
 
     @GetMapping("/salud")
-    public MonitorIndices getSaludGlobal() {
-        ProcessMetrics pm = oracleExtractionRepository.getProcessMetrics();
-        MemoryMetrics mm = oracleExtractionRepository.getMemoryMetrics();
-        FileMetrics fm = oracleExtractionRepository.getFileMetrics();
+    public MonitorIndices getSaludGlobal(
+            @RequestParam(required = false, defaultValue = "real") String escenario) { // <-- Agregamos el parámetro
 
-        // Calcular índices
+        ProcessMetrics pm;
+        MemoryMetrics mm;
+        FileMetrics fm;
+
+        // Evaluamos si usamos los datos reales de Oracle o los simulados
+        if ("real".equalsIgnoreCase(escenario)) {
+            pm = oracleExtractionRepository.getProcessMetrics();
+            mm = oracleExtractionRepository.getMemoryMetrics();
+            fm = oracleExtractionRepository.getFileMetrics();
+        } else {
+            pm = simulationService.getSimulatedProcesses(escenario);
+            mm = simulationService.getSimulatedMemory(escenario);
+            fm = simulationService.getSimulatedFiles(escenario);
+        }
+
+        // El motor de cálculo y alertas no se entera de que los datos son simulados
         HealthResult resultado = calculationService.calculateHealth(pm, mm, fm);
-
-        // Disparar motor de alertas[cite: 1]
         alertService.evaluarYGuardarAlertas(pm, mm, fm);
 
-        // Guardar en historial y retornar
         return historyService.guardarHistorial(resultado);
     }
 

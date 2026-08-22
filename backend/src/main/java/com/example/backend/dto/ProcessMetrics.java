@@ -3,49 +3,76 @@ package com.example.backend.dto;
 import lombok.Data;
 
 public class ProcessMetrics {
-    private Integer procesosActuales;
-    private Integer limiteProcesos;
-    private Integer sesionesTotales;
-    private Integer sesionesActivas;
-    private Integer sesionesBloqueadas;
+    private int procesosActuales;     // p1
+    private int procesosMaximos;      // p2
+    private int sesionesActuales;     // p3
+    private int sesionesActivas;      // p4
+    private int sesionesInactivas;    // p5
+    private int sesionesBloqueadas;   // p6
+    private int operacionesProlongadas; // p7
+    private int usoRecursos;
 
-    public Integer getProcesosActuales() {
+    public int getProcesosActuales() {
         return procesosActuales;
     }
 
-    public void setProcesosActuales(Integer procesosActuales) {
+    public void setProcesosActuales(int procesosActuales) {
         this.procesosActuales = procesosActuales;
     }
 
-    public Integer getLimiteProcesos() {
-        return limiteProcesos;
+    public int getProcesosMaximos() {
+        return procesosMaximos;
     }
 
-    public void setLimiteProcesos(Integer limiteProcesos) {
-        this.limiteProcesos = limiteProcesos;
+    public void setProcesosMaximos(int procesosMaximos) {
+        this.procesosMaximos = procesosMaximos;
     }
 
-    public Integer getSesionesTotales() {
-        return sesionesTotales;
+    public int getSesionesActuales() {
+        return sesionesActuales;
     }
 
-    public void setSesionesTotales(Integer sesionesTotales) {
-        this.sesionesTotales = sesionesTotales;
+    public void setSesionesActuales(int sesionesActuales) {
+        this.sesionesActuales = sesionesActuales;
     }
 
-    public Integer getSesionesActivas() {
+    public int getSesionesActivas() {
         return sesionesActivas;
     }
 
-    public void setSesionesActivas(Integer sesionesActivas) {
+    public void setSesionesActivas(int sesionesActivas) {
         this.sesionesActivas = sesionesActivas;
     }
 
-    public Integer getSesionesBloqueadas() {
+    public int getSesionesInactivas() {
+        return sesionesInactivas;
+    }
+
+    public void setSesionesInactivas(int sesionesInactivas) {
+        this.sesionesInactivas = sesionesInactivas;
+    }
+
+    public int getSesionesBloqueadas() {
         return sesionesBloqueadas;
     }
 
-    public void setSesionesBloqueadas(Integer sesionesBloqueadas) {
+    public void setSesionesBloqueadas(int sesionesBloqueadas) {
         this.sesionesBloqueadas = sesionesBloqueadas;
+    }
+
+    public int getOperacionesProlongadas() {
+        return operacionesProlongadas;
+    }
+
+    public void setOperacionesProlongadas(int operacionesProlongadas) {
+        this.operacionesProlongadas = operacionesProlongadas;
+    }
+
+    public int getUsoRecursos() {
+        return usoRecursos;
+    }
+
+    public void setUsoRecursos(int usoRecursos) {
+        this.usoRecursos = usoRecursos;
     }
 }

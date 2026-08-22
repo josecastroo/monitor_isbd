@@ -17,11 +17,11 @@ public class CalculationService {
         HealthResult result = new HealthResult();
 
         // 1. Calcular IP (Índice de Procesos)[cite: 1]
-        int procActuales = pMetrics.getProcesosActuales() != null ? pMetrics.getProcesosActuales() : 0;
-        int procLimite = (pMetrics.getLimiteProcesos() != null && pMetrics.getLimiteProcesos() > 0) ? pMetrics.getLimiteProcesos() : 1000; // Evita división por cero
-        int sesBloqueadas = pMetrics.getSesionesBloqueadas() != null ? pMetrics.getSesionesBloqueadas() : 0;
+        int procActuales = pMetrics.getProcesosActuales();
+        int procMaximos = pMetrics.getProcesosMaximos() > 0 ? pMetrics.getProcesosMaximos() : 1000; // Evita división por cero
+        int sesBloqueadas = pMetrics.getSesionesBloqueadas();
 
-        double usoProcesos = (procActuales / (double) procLimite) * 100;
+        double usoProcesos = (procActuales / (double) procMaximos) * 100;
         double ip = 100.0 - usoProcesos;
         if (sesBloqueadas > 0) {
             ip -= (sesBloqueadas * 10);
@@ -39,12 +39,12 @@ public class CalculationService {
         result.setIndiceMemoria(Math.max(0, Math.min(100, im)));
 
         // 3. Calcular IA (Índice de Archivos)[cite: 1]
-        int dfOffline = fMetrics.getDatafilesOffline() != null ? fMetrics.getDatafilesOffline() : 0;
-        int redoProblemas = fMetrics.getRedoLogsProblemas() != null ? fMetrics.getRedoLogsProblemas() : 0;
+        int dfOffline = fMetrics.getDatafilesOffline();
+        int archInvalidos = fMetrics.getArchivosInvalidos();
 
         double ia = 100.0;
         if (dfOffline > 0) ia -= 50;
-        if (redoProblemas > 0) ia -= 50;
+        if (archInvalidos > 0) ia -= 50;
         result.setIndiceArchivos(Math.max(0, Math.min(100, ia)));
 
         // 4. Calcular ISBD global (Promedio ponderado)[cite: 1]
