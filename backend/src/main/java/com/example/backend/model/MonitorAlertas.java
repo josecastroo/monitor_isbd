@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "MONITOR_ALERTAS")
-public class MonitorAlerta {
+public class MonitorAlertas {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
