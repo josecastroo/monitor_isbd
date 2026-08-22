@@ -8,6 +8,7 @@ import com.example.backend.model.MonitorIndices;
 import com.example.backend.repository.OracleExtractionRepository;
 import com.example.backend.service.CalculationService;
 import com.example.backend.service.HistoryService;
+import com.example.backend.service.AlertService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,13 +19,16 @@ public class TestController {
     private final OracleExtractionRepository oracleExtractionRepository;
     private final CalculationService calculationService;
     private final HistoryService historyService;
+    private final AlertService alertService;
 
     public TestController(OracleExtractionRepository oracleExtractionRepository,
                           CalculationService calculationService,
-                          HistoryService historyService) {
+                          HistoryService historyService,
+                          AlertService alertService) {
         this.oracleExtractionRepository = oracleExtractionRepository;
         this.calculationService = calculationService;
         this.historyService = historyService;
+        this.alertService = alertService;
     }
 
     @GetMapping("/procesos")
@@ -45,15 +49,17 @@ public class TestController {
 
     @GetMapping("/salud")
     public MonitorIndices getSaludGlobal() {
-        // 1. Extraer datos[cite: 1]
         ProcessMetrics pm = oracleExtractionRepository.getProcessMetrics();
         MemoryMetrics mm = oracleExtractionRepository.getMemoryMetrics();
         FileMetrics fm = oracleExtractionRepository.getFileMetrics();
 
-        // 2. Calcular los índices[cite: 1]
+        // Calcular índices
         HealthResult resultado = calculationService.calculateHealth(pm, mm, fm);
 
-        // 3. Guardar en Oracle y retornar el registro guardado[cite: 1]
+        // Disparar motor de alertas[cite: 1]
+        alertService.evaluarYGuardarAlertas(pm, mm, fm);
+
+        // Guardar en historial y retornar
         return historyService.guardarHistorial(resultado);
     }
 }
