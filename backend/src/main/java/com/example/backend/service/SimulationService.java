@@ -7,57 +7,111 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SimulationService {
+
     public ProcessMetrics getSimulatedProcesses(String escenario) {
         ProcessMetrics pm = new ProcessMetrics();
-        pm.setProcesosActuales(50);
-        pm.setProcesosMaximos(300); // p2
-        pm.setSesionesActuales(40); // p3
-        pm.setSesionesActivas(10);  // p4
-        pm.setSesionesInactivas(30); // p5
-        pm.setSesionesBloqueadas(0); // p6
-        pm.setOperacionesProlongadas(0); // p7
-        pm.setUsoRecursos(20);      // p8
+        // Valores base (Óptimos)
+        pm.setProcesosActuales(150);
+        pm.setProcesosMaximos(1000);
+        pm.setSesionesActuales(120);
+        pm.setSesionesActivas(20);
+        pm.setSesionesInactivas(100);
+        pm.setSesionesBloqueadas(0);
+        pm.setOperacionesProlongadas(0);
+        pm.setUsoRecursos(15);
 
-        if ("procesos".equalsIgnoreCase(escenario)) {
-            pm.setProcesosActuales(285);
-            pm.setSesionesBloqueadas(5); // Falla en p6
+        switch (escenario != null ? escenario.toLowerCase() : "") {
+            case "optimo":
+                pm.setProcesosActuales(200); // Uso muy bajo
+                break;
+            case "saludable":
+                pm.setProcesosActuales(400); // Uso normal
+                break;
+            case "advertencia":
+                pm.setProcesosActuales(650); // Uso en 65%
+                pm.setOperacionesProlongadas(1);
+                break;
+            case "degradado":
+                pm.setProcesosActuales(800); // Uso al 80%
+                pm.setOperacionesProlongadas(3);
+                break;
+            case "critico_cap": // Cae procesos, salva el resto
+                pm.setProcesosActuales(950);
+                pm.setSesionesBloqueadas(2); // Esto tumba el índice de procesos
+                break;
+            case "critico_real": // Todo cae
+                pm.setProcesosActuales(900);
+                pm.setSesionesBloqueadas(5);
+                break;
         }
         return pm;
     }
 
     public MemoryMetrics getSimulatedMemory(String escenario) {
         MemoryMetrics mm = new MemoryMetrics();
-        mm.setSgaTotal(2147483648L);      // m1
-        mm.setSgaLibre(536870912L);       // m2
-        mm.setSharedPool(804354560L);     // m3
-        mm.setBufferCache(1073741824L);   // m4
-        mm.setPgaAsignada(536870912L);    // m5
-        mm.setPgaUtilizada(268435456L);   // m6
-        mm.setPgaMaxima(1073741824L);     // m7
-        mm.setPgaOverAllocation(0L);      // m8
-        mm.setPgaCacheHit(99.0);          // m9
+        // Valores base (Óptimos)
+        mm.setSgaTotal(4294967296L);
+        mm.setSgaLibre(1073741824L);
+        mm.setSharedPool(1073741824L);
+        mm.setBufferCache(2147483648L);
+        mm.setPgaAsignada(1073741824L);
+        mm.setPgaUtilizada(536870912L);
+        mm.setPgaMaxima(1073741824L);
+        mm.setPgaOverAllocation(0L);
+        mm.setPgaCacheHit(100.0);
 
-        if ("memoria".equalsIgnoreCase(escenario)) {
-            mm.setPgaCacheHit(45.0);      // Falla en m9
-            mm.setPgaOverAllocation(1500L); // Falla en m8
+        switch (escenario != null ? escenario.toLowerCase() : "") {
+            case "optimo":
+                mm.setPgaCacheHit(98.0);
+                break;
+            case "saludable":
+                mm.setPgaCacheHit(85.0);
+                break;
+            case "advertencia":
+                mm.setPgaCacheHit(72.0);
+                break;
+            case "degradado":
+                mm.setPgaCacheHit(55.0);
+                break;
+            case "critico_cap":
+                mm.setPgaCacheHit(99.0); // Memoria perfecta
+                break;
+            case "critico_real":
+                mm.setPgaCacheHit(20.0); // Memoria destruida
+                mm.setPgaOverAllocation(500L);
+                break;
         }
         return mm;
     }
 
     public FileMetrics getSimulatedFiles(String escenario) {
         FileMetrics fm = new FileMetrics();
-        fm.setDatafilesOnline(4);      // a1
-        fm.setDatafilesOffline(0);     // a2
-        fm.setTamanoDatafiles(50000000L); // a3
-        fm.setEspacioTablespaces(80L); // a4
-        fm.setTempfiles(2);            // a5
-        fm.setRedoLogs(3);             // a6
-        fm.setArchivosInvalidos(0);    // a7
-        fm.setArchivosInaccesibles(0); // a8
+        // Valores base (Óptimos)
+        fm.setDatafilesOnline(10);
+        fm.setDatafilesOffline(0);
+        fm.setTamanoDatafiles(53687091200L);
+        fm.setEspacioTablespaces(42949672960L);
+        fm.setTempfiles(2);
+        fm.setRedoLogs(3);
+        fm.setArchivosInvalidos(0);
+        fm.setArchivosInaccesibles(0);
 
-        if ("archivos".equalsIgnoreCase(escenario)) {
-            fm.setDatafilesOffline(1); // Falla en a2
-            fm.setArchivosInvalidos(1); // Falla en a7
+        switch (escenario != null ? escenario.toLowerCase() : "") {
+            case "optimo":
+            case "saludable":
+                break; // Quedan en 100
+            case "advertencia":
+                fm.setArchivosInvalidos(1); // Pequeña penalización
+                break;
+            case "degradado":
+                fm.setArchivosInvalidos(3); // Penalización media
+                break;
+            case "critico_cap":
+                break; // Quedan en 100
+            case "critico_real":
+                fm.setDatafilesOffline(2); // Falla crítica de archivos
+                fm.setArchivosInaccesibles(1);
+                break;
         }
         return fm;
     }
